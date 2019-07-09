@@ -25,11 +25,9 @@ RUN apt-get update && \
     cp -r /tmp/kafka_2.12-2.2.0/ /opt/ && \
     rm /tmp/kafka_"$SCALA_VERSION"-"$KAFKA_VERSION".tgz
 
-
-ADD scripts/start-kafka.sh /usr/bin/start-kafka.sh
-
-# Supervisor config
-ADD supervisor/kafka.conf supervisor/zookeeper.conf /etc/supervisor/conf.d/
+# Install telnet so we can healthcheck zookeeper
+RUN apt-get update && \
+    apt-get -y install telnet
 
 # 2181 is zookeeper, 9092 is kafka
 EXPOSE 2181 9092
@@ -40,7 +38,7 @@ ARG DEPENDENCY=target/dependency
 COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY ${DEPENDENCY}/META-INF /app/META-INF
 COPY ${DEPENDENCY}/BOOT-INF/classes /app
+COPY /target/gs-spring-boot-docker-0.1.0.jar /app
 
-#CMD  /opt/kafka_2.12-2.2.0/bin/zookeeper-server-start.sh /opt/kafka_2.12-2.2.0/config/zookeeper.properties
-#CMD /opt/kafka_2.12-2.2.0/bin/kafka-server-start.sh /opt/kafka_2.12-2.2.0/config/server.properties
-ENTRYPOINT ["java","-cp","app:app/lib/*","hello.Application","supervisord", "-n"]
+
+CMD tail -f /dev/null

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,10 +19,10 @@ public class Application {
         kafkaTemplate.send("mytopic", msg);
     }
 
-    @RequestMapping("/")
-    public String home() {
-        sendMessage("blah");
-        return "Hello Docker World";
+    @RequestMapping("/{id}")
+    public String home(@PathVariable String id) {
+        sendMessage(id);
+        return "Hello Docker World" + id;
     }
 
     public static void main(String[] args) {
